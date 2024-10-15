@@ -16,7 +16,7 @@ abstract class AbstractApi {
     return response.body;
   }
 
-  Future<String?> post(Map<String, String> dados) async {
+  Future<String?> post(Map<String, dynamic> dados) async {
     var response = await http.post(
       Uri.parse('$_urlLocalHost/$_recurso'),
       body: dados,
