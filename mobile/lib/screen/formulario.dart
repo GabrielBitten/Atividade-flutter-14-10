@@ -1,35 +1,42 @@
+// formulario.dart
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class FormularioItem extends StatefulWidget {
+class Formulario extends StatefulWidget {
   @override
-  _FormularioItemState createState() => _FormularioItemState();
+  _FormularioTransacaoState createState() => _FormularioTransacaoState();
 }
 
-class _FormularioItemState extends State<FormularioItem> {
-  final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _valorController = TextEditingController();
+class _FormularioTransacaoState extends State<Formulario> {
+  final TextEditingController nomeController = TextEditingController();
+  final TextEditingController valorController = TextEditingController();
 
-  void _adicionarItem() {
-    final nome = _nomeController.text;
-    final valor = double.tryParse(_valorController.text) ?? 0.0;
+  Future<void> adicionarTransacao() async {
+    final url = 'http://localhost:3000'; // Substitua pelo IP do seu PC
+    final nome = nomeController.text;
+    final valor = valorController.text;
 
-    if (nome.isNotEmpty && valor > 0) {
-      // Aqui você pode adicionar o código para salvar os dados no seu banco
-      Navigator.pop(context); // Volta para a tela anterior
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Erro'),
-          content: Text('Por favor, preencha todos os campos corretamente.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
+    if (nome.isNotEmpty && valor.isNotEmpty) {
+      try {
+        final response = await http.post(
+          Uri.parse(url),
+          body: jsonEncode({
+            'nome': nome,
+            'valor': double.parse(valor),
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
+        if (response.statusCode == 201) {
+          Navigator.pop(context); // Voltar à lista após adicionar
+        } else {
+          print('Erro ao adicionar: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Erro ao adicionar: $e');
+      }
     }
   }
 
@@ -37,26 +44,40 @@ class _FormularioItemState extends State<FormularioItem> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Adicionar Item'),
-        centerTitle: true,
+        title: const Text('Adicionar transação',
+        style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            
+          ),
+          ), centerTitle: true,
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
-              controller: _nomeController,
+              controller: nomeController,
               decoration: InputDecoration(labelText: 'Nome'),
             ),
             TextField(
-              controller: _valorController,
+              controller: valorController,
               decoration: InputDecoration(labelText: 'Valor'),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _adicionarItem,
-              child: Text('Adicionar'),
+              onPressed: adicionarTransacao,
+              child: const Text('Adicionar',
+                style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+             fontSize: 18,
+          ),),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+              ),
             ),
           ],
         ),

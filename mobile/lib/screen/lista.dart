@@ -1,5 +1,8 @@
+// lista_transacoes.dart
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'formulario.dart'; // Importa o formulário
 
 class ListaTransacoes extends StatefulWidget {
   @override
@@ -10,14 +13,15 @@ class _ListaTransacoesState extends State<ListaTransacoes> {
   List<dynamic> transacoes = [];
 
   Future<void> fetchTransacoes() async {
-    final url = 'http://localhost:3000';
+    final url = 'http://localhost:3000'; // Substitua pelo IP do seu PC
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
-        transacoes = List<Map<String, dynamic>>.from(
-          (response.body as List).map((item) => item as Map<String, dynamic>),
-        );
-        setState(() {});
+        setState(() {
+          transacoes = jsonDecode(response.body);
+        });
+      } else {
+        print('Erro ao carregar dados: ${response.statusCode}');
       }
     } catch (e) {
       print('Erro na requisição: $e');
@@ -35,10 +39,10 @@ class _ListaTransacoesState extends State<ListaTransacoes> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Lista de Transações',
+          'Lista de Dados',
           style: TextStyle(
-            color: Colors.white,      
-            fontWeight: FontWeight.bold, 
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
@@ -59,7 +63,11 @@ class _ListaTransacoesState extends State<ListaTransacoes> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-       
+         
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Formulario()),
+          );
         },
         child: const Icon(Icons.add),
         backgroundColor: Colors.blue,
