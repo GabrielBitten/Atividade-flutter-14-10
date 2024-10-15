@@ -1,4 +1,4 @@
-// formulario.dart
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -13,7 +13,7 @@ class _FormularioTransacaoState extends State<Formulario> {
   final TextEditingController valorController = TextEditingController();
 
   Future<void> adicionarTransacao() async {
-    final url = 'http://localhost:3000'; // Substitua pelo IP do seu PC
+    final url = 'http://localhost:3000';
     final nome = nomeController.text;
     final valor = valorController.text;
 
@@ -30,7 +30,7 @@ class _FormularioTransacaoState extends State<Formulario> {
           },
         );
         if (response.statusCode == 201) {
-          Navigator.pop(context); // Voltar à lista após adicionar
+          Navigator.pop(context);
         } else {
           print('Erro ao adicionar: ${response.statusCode}');
         }
