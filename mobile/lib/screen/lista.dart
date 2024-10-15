@@ -1,9 +1,8 @@
-// lista_transacoes.dart
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'formulario.dart'; // Importa o formulário
-
+import 'formulario.dart'; 
 class ListaTransacoes extends StatefulWidget {
   @override
   _ListaTransacoesState createState() => _ListaTransacoesState();
@@ -13,7 +12,7 @@ class _ListaTransacoesState extends State<ListaTransacoes> {
   List<dynamic> transacoes = [];
 
   Future<void> fetchTransacoes() async {
-    final url = 'http://localhost:3000'; // Substitua pelo IP do seu PC
+    final url = 'http://localhost:3000'; 
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
