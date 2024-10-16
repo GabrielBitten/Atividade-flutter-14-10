@@ -9,11 +9,12 @@ class Formulario extends StatefulWidget {
 }
 
 class _FormularioTransacaoState extends State<Formulario> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController nomeController = TextEditingController();
   final TextEditingController valorController = TextEditingController();
 
   Future<void> adicionarTransacao() async {
-    final url = 'http://localhost:3000';
+    const url = 'http://localhost:3000/transacoes';
     final nome = nomeController.text;
     final valor = valorController.text;
 
@@ -23,13 +24,21 @@ class _FormularioTransacaoState extends State<Formulario> {
           Uri.parse(url),
           body: jsonEncode({
             'nome': nome,
-            'valor': double.parse(valor),
+            'valor': valor,
           }),
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', // Cabeçalho para JSON
           },
         );
+
         if (response.statusCode == 201) {
+          // Mensagem de sucesso
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Transação adicionada com sucesso!')),
+          );
+          // Limpar os campos após a adição
+          nomeController.clear();
+          valorController.clear();
           Navigator.pop(context);
         } else {
           print('Erro ao adicionar: ${response.statusCode}');
@@ -44,42 +53,64 @@ class _FormularioTransacaoState extends State<Formulario> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Adicionar transação',
-        style: TextStyle(
+        title: const Text(
+          'Adicionar Transação',
+          style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            
           ),
-          ), centerTitle: true,
+        ),
+        centerTitle: true,
         backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: nomeController,
-              decoration: InputDecoration(labelText: 'Nome'),
-            ),
-            TextField(
-              controller: valorController,
-              decoration: InputDecoration(labelText: 'Valor'),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: adicionarTransacao,
-              child: const Text('Adicionar',
-                style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-             fontSize: 18,
-          ),),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: nomeController,
+                decoration: const InputDecoration(labelText: 'Nome'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Informe o nome';
+                  }
+                  return null;
+                },
               ),
-            ),
-          ],
+              TextFormField(
+                controller: valorController,
+                decoration: const InputDecoration(labelText: 'Valor'),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Informe o valor';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    await adicionarTransacao();
+                  }
+                },
+                child: const Text(
+                  'Adicionar',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
