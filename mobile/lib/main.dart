@@ -10,9 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'App de Transações',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+   
       home: ListaTransacoes(), 
     );
   }
