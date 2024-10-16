@@ -38,7 +38,7 @@ class _ListaTransacoesState extends State<ListaTransacoes> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Lista de Dados',
+          'Lista de Dadoss',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
