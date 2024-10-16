@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 abstract class AbstractApi {
@@ -19,7 +20,7 @@ abstract class AbstractApi {
   Future<String?> post(Map<String, dynamic> dados) async {
     var response = await http.post(
       Uri.parse('$_urlLocalHost/$_recurso'),
-      body: dados,
+      body: jsonEncode(dados),
     );
     return response.body;
   }
@@ -27,11 +28,11 @@ abstract class AbstractApi {
   Future<String?> updateById(int id, Map<String, String> dados) async {
     var response = await http.put(
       Uri.parse('$_urlLocalHost/$_recurso/$id'),
-      body: dados,
+      body: jsonEncode(dados),
     );
     return response.body;
   }
-
+  
   Future<String?> deleteById(int id) async {
     var response = await http.delete(Uri.parse('$_urlLocalHost/$_recurso/$id'));
     return response.statusCode == 200 ? 'Item com id $id deletado.' : null;
